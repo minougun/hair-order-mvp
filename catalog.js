@@ -187,7 +187,7 @@ export const HAIR_CATALOG = [
     title: "梅田ビジネスショート",
     subtitle: "清潔感と収まりを両立した関西向け定番",
     sourceName: "L-MARK 梅田店",
-    location: location(34.7047, 135.4979, "大阪府", "梅田", ["大阪", "大阪駅", "北区", "梅田駅", "宝塚", "関西"]),
+    location: location(34.7047, 135.4979, "大阪府", "梅田", ["大阪", "大阪駅", "北区", "梅田駅", "宝塚", "北摂", "豊中", "箕面", "関西"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000790795/style/L265695495.html",
       "https://beauty.hotpepper.jp/slnH000790795/",
@@ -279,6 +279,20 @@ export const HAIR_CATALOG = [
       "https://beauty.hotpepper.jp/slnH000561760/"
     ),
     tags: ["length_short", "goal_business", "goal_clean", "time_3", "tool_no_iron", "shape_control_bangs", "style_natural", "occasion_office", "gender_male"],
+  },
+  {
+    id: "C20",
+    title: "梅田まとまりミディアム",
+    subtitle: "広がりを抑えるやわらかフォルム",
+    sourceName: "HAIR SALON KENJE 梅田店",
+    location: location(34.7024, 135.4982, "大阪府", "梅田", ["大阪", "大阪駅", "北区", "箕面", "北摂", "豊中", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000026637/style/",
+      "https://beauty.hotpepper.jp/slnH000026637/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000026637/"
+    ),
+    tags: ["length_medium", "goal_clean", "goal_soft", "time_7", "tool_no_iron", "shape_anti_frizz", "style_natural", "occasion_flexible", "gender_unisex"],
   },
 ];
 
@@ -398,7 +412,34 @@ export function findBestCatalogItems({ input, result, limit = 3 }) {
     return distanceA - distanceB;
   });
 
-  const selected = scored.slice(0, limit).map((item, index) => ({
+  const RELAXED_THRESHOLD_KM = 25;
+  let topItems = scored.slice(0, limit);
+  let relaxedMode = false;
+
+  if (locationSignal.coords) {
+    const nearestTopDist = topItems.reduce((min, item) => {
+      const d = Number.isFinite(item.distanceKm) ? item.distanceKm : Infinity;
+      return d < min ? d : min;
+    }, Infinity);
+
+    if (nearestTopDist > RELAXED_THRESHOLD_KM) {
+      const hasNearbySalon = scored.some(
+        (item) => Number.isFinite(item.distanceKm) && item.distanceKm <= RELAXED_THRESHOLD_KM
+      );
+      if (hasNearbySalon) {
+        const byDistance = [...scored].sort((a, b) => {
+          const dA = Number.isFinite(a.distanceKm) ? a.distanceKm : Infinity;
+          const dB = Number.isFinite(b.distanceKm) ? b.distanceKm : Infinity;
+          if (dA !== dB) return dA - dB;
+          return b.score - a.score;
+        });
+        topItems = byDistance.slice(0, limit);
+        relaxedMode = true;
+      }
+    }
+  }
+
+  const selected = topItems.map((item, index) => ({
     ...item,
     rank: index + 1,
     reason: buildReasonText(item),
@@ -407,7 +448,7 @@ export function findBestCatalogItems({ input, result, limit = 3 }) {
   return {
     queryTags,
     items: selected,
-    locationHint: buildLocationHint(locationSignal, selected),
+    locationHint: buildLocationHint(locationSignal, selected, relaxedMode),
   };
 }
 
@@ -491,11 +532,14 @@ function scoreLocation(item, locationSignal) {
     result.distanceKm = distanceKm;
 
     if (distanceKm <= 5) result.locationScore += 20;
-    else if (distanceKm <= 15) result.locationScore += 14;
-    else if (distanceKm <= 40) result.locationScore += 9;
-    else if (distanceKm <= 100) result.locationScore += 3;
-    else if (distanceKm <= 250) result.locationScore -= 8;
-    else result.locationScore -= 22;
+    else if (distanceKm <= 10) result.locationScore += 16;
+    else if (distanceKm <= 15) result.locationScore += 10;
+    else if (distanceKm <= 20) result.locationScore += 4;
+    else if (distanceKm <= 30) result.locationScore -= 10;
+    else if (distanceKm <= 50) result.locationScore -= 18;
+    else if (distanceKm <= 100) result.locationScore -= 24;
+    else if (distanceKm <= 250) result.locationScore -= 30;
+    else result.locationScore -= 36;
   }
 
   if (locationSignal.areaTokens.length > 0) {
@@ -552,7 +596,7 @@ function buildReasonText(item) {
   return reasonParts.length > 0 ? reasonParts.join(" / ") : "汎用候補";
 }
 
-function buildLocationHint(locationSignal, selectedItems) {
+function buildLocationHint(locationSignal, selectedItems, relaxedMode = false) {
   if (!locationSignal.coords && locationSignal.areaTokens.length === 0) {
     return "地域未設定のため、髪型条件を優先して表示しています。";
   }
@@ -569,6 +613,10 @@ function buildLocationHint(locationSignal, selectedItems) {
     } else {
       hints.push("現在地優先（距離情報未設定の候補あり）");
     }
+  }
+
+  if (relaxedMode) {
+    hints.push("近隣に全条件一致の候補がなかったため、距離を優先して表示しています");
   }
 
   return hints.join(" / ");
@@ -699,17 +747,20 @@ function expandAreaTokens(areaQueryRaw) {
   for (const token of splitTokens) tokens.add(token);
 
   const aliasMap = {
-    宝塚: ["宝塚", "西宮", "兵庫", "神戸", "三宮", "関西"],
-    西宮: ["西宮", "兵庫", "宝塚", "神戸", "関西"],
-    三宮: ["三宮", "神戸", "兵庫", "元町", "関西"],
-    神戸: ["神戸", "三宮", "元町", "兵庫", "関西"],
-    梅田: ["梅田", "大阪", "大阪駅", "なんば", "心斎橋", "関西"],
-    なんば: ["なんば", "難波", "心斎橋", "大阪", "関西"],
-    心斎橋: ["心斎橋", "なんば", "難波", "大阪", "関西"],
-    京都: ["京都", "河原町", "三条", "四条", "関西"],
-    飯田橋: ["飯田橋", "東京", "新宿", "関東"],
-    銀座: ["銀座", "東京", "有楽町", "関東"],
-    渋谷: ["渋谷", "原宿", "東京", "関東"],
+    宝塚: ["宝塚", "西宮", "兵庫", "神戸", "三宮"],
+    西宮: ["西宮", "兵庫", "宝塚", "神戸"],
+    三宮: ["三宮", "神戸", "兵庫", "元町"],
+    神戸: ["神戸", "三宮", "元町", "兵庫"],
+    梅田: ["梅田", "大阪", "大阪駅", "なんば", "心斎橋"],
+    なんば: ["なんば", "難波", "心斎橋", "大阪"],
+    心斎橋: ["心斎橋", "なんば", "難波", "大阪"],
+    箕面: ["箕面", "豊中", "北摂", "池田", "大阪", "梅田"],
+    豊中: ["豊中", "箕面", "北摂", "大阪", "梅田"],
+    北摂: ["北摂", "豊中", "箕面", "池田", "大阪", "梅田"],
+    京都: ["京都", "河原町", "三条", "四条"],
+    飯田橋: ["飯田橋", "東京", "新宿"],
+    銀座: ["銀座", "東京", "有楽町"],
+    渋谷: ["渋谷", "原宿", "東京"],
   };
 
   for (const [key, values] of Object.entries(aliasMap)) {
