@@ -43,9 +43,10 @@ const VALUE_LABELS = {
   crown: { weak: "弱い", normal: "普通", strong: "強い" },
 };
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const input = collectInput();
+  let input = collectInput();
+  input = await enrichLocationInput(input);
   const result = generateOrder(input);
   renderResult(result);
   resultSection.hidden = false;
@@ -133,6 +134,16 @@ if (detectLocationButton && locationStatusEl && latitudeInput && longitudeInput)
   });
 }
 
+if (areaQueryInput && latitudeInput && longitudeInput && locationStatusEl) {
+  areaQueryInput.addEventListener("input", () => {
+    const hadCoords = latitudeInput.value.trim().length > 0 || longitudeInput.value.trim().length > 0;
+    if (!hadCoords) return;
+    latitudeInput.value = "";
+    longitudeInput.value = "";
+    locationStatusEl.textContent = "エリアが更新されたため、前回の現在地をリセットしました。";
+  });
+}
+
 function collectInput() {
   const data = new FormData(form);
   const latitude = Number.parseFloat(`${data.get("latitude") || ""}`);
@@ -157,6 +168,38 @@ function collectInput() {
       Number.isFinite(latitude) && Number.isFinite(longitude)
         ? { lat: latitude, lng: longitude }
         : null,
+  };
+}
+
+async function enrichLocationInput(input) {
+  if (input.location || !input.areaQuery) {
+    return input;
+  }
+
+  if (locationStatusEl) {
+    locationStatusEl.textContent = `エリア「${input.areaQuery}」から位置を推定しています...`;
+  }
+
+  const geocoded = await geocodeAreaQuery(input.areaQuery);
+  if (!geocoded) {
+    if (locationStatusEl) {
+      locationStatusEl.textContent = `エリア「${input.areaQuery}」の位置を推定できませんでした。入力条件のみで候補を表示します。`;
+    }
+    return input;
+  }
+
+  if (latitudeInput && longitudeInput) {
+    latitudeInput.value = String(geocoded.lat);
+    longitudeInput.value = String(geocoded.lng);
+  }
+
+  if (locationStatusEl) {
+    locationStatusEl.textContent = `エリア「${input.areaQuery}」を地図上で推定しました。近い候補を優先します。`;
+  }
+
+  return {
+    ...input,
+    location: { lat: geocoded.lat, lng: geocoded.lng },
   };
 }
 
@@ -668,6 +711,38 @@ function buildCatalogSourceText(item) {
     return `参照元: ${item.sourceName}`;
   }
   return `参照元: ${item.sourceName}（${meta.join(" / ")}）`;
+}
+
+async function geocodeAreaQuery(query) {
+  const cleaned = `${query || ""}`.trim();
+  if (cleaned.length === 0) return null;
+
+  try {
+    const params = new URLSearchParams({
+      format: "jsonv2",
+      q: `${cleaned} 日本`,
+      limit: "1",
+      addressdetails: "1",
+      "accept-language": "ja",
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`);
+    if (!response.ok) return null;
+
+    const result = await response.json();
+    const top = Array.isArray(result) ? result[0] : null;
+    if (!top) return null;
+
+    const lat = Number.parseFloat(top.lat);
+    const lng = Number.parseFloat(top.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    return {
+      lat: Number(lat.toFixed(6)),
+      lng: Number(lng.toFixed(6)),
+    };
+  } catch {
+    return null;
+  }
 }
 
 function requestCurrentPosition() {
