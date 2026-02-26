@@ -1,4 +1,5 @@
 import { CONCERN_RULES, GOAL_RULES, ORDER_PRESETS, TIME_RULES } from "./templates.js";
+import { findBestCatalogItems } from "./catalog.js";
 
 const form = document.getElementById("order-form");
 const resultSection = document.getElementById("result-section");
@@ -10,6 +11,8 @@ const askEl = document.getElementById("result-ask");
 const searchEl = document.getElementById("result-search");
 const orderTextEl = document.getElementById("order-text");
 const shareTextEl = document.getElementById("share-text");
+const catalogMainEl = document.getElementById("catalog-main");
+const catalogGridEl = document.getElementById("catalog-grid");
 const copyOrderButton = document.getElementById("copy-order");
 const copyShareButton = document.getElementById("copy-share");
 const downloadCardButton = document.getElementById("download-card");
@@ -176,7 +179,7 @@ function generateOrder(input) {
     summary,
   });
 
-  return {
+  const baseResult = {
     badge: preset.badge,
     summary,
     specifics: compactSpecifics,
@@ -189,6 +192,17 @@ function generateOrder(input) {
     concernLabels,
     goalLabels,
     setTime: input.setTime,
+  };
+
+  const catalog = findBestCatalogItems({
+    input,
+    result: baseResult,
+    limit: 3,
+  });
+
+  return {
+    ...baseResult,
+    catalog,
   };
 }
 
@@ -297,6 +311,7 @@ function renderResult(result) {
 
   orderTextEl.value = result.orderText;
   shareTextEl.value = result.shareText;
+  renderCatalog(result.catalog);
 }
 
 function drawShareCard(canvas, result) {
@@ -430,6 +445,69 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fillStyle) {
   ctx.closePath();
   ctx.fillStyle = fillStyle;
   ctx.fill();
+}
+
+function renderCatalog(catalog) {
+  catalogMainEl.innerHTML = "";
+  catalogGridEl.innerHTML = "";
+
+  if (!catalog || !Array.isArray(catalog.items) || catalog.items.length === 0) {
+    catalogMainEl.textContent = "該当候補が見つかりませんでした。";
+    return;
+  }
+
+  const [mainItem, ...otherItems] = catalog.items;
+  catalogMainEl.appendChild(renderCatalogCard(mainItem, true));
+
+  for (const item of otherItems) {
+    catalogGridEl.appendChild(renderCatalogCard(item, false));
+  }
+}
+
+function renderCatalogCard(item, isMain) {
+  const card = document.createElement("article");
+  card.className = isMain ? "catalog-card catalog-card-main" : "catalog-card";
+
+  const image = document.createElement("img");
+  image.className = "catalog-image";
+  image.src = item.imageUrl;
+  image.alt = `${item.title}の参考画像`;
+  image.loading = "lazy";
+  image.referrerPolicy = "no-referrer";
+  image.addEventListener("error", () => {
+    image.style.display = "none";
+  });
+
+  const body = document.createElement("div");
+  body.className = "catalog-body";
+
+  const rank = document.createElement("p");
+  rank.className = "catalog-rank";
+  rank.textContent = isMain ? "最有力候補" : `代替候補 ${item.rank}`;
+
+  const title = document.createElement("h4");
+  title.className = "catalog-title";
+  title.textContent = item.title;
+
+  const subtitle = document.createElement("p");
+  subtitle.className = "catalog-subtitle";
+  subtitle.textContent = item.subtitle;
+
+  const reason = document.createElement("p");
+  reason.className = "catalog-reason";
+  reason.textContent = `一致: ${item.reason}`;
+
+  const link = document.createElement("a");
+  link.className = "catalog-link";
+  link.href = item.sourceUrl;
+  link.target = "_blank";
+  link.rel = "noreferrer noopener";
+  link.textContent = "画像ソースを開く";
+
+  body.append(rank, title, subtitle, reason, link);
+  card.append(image, body);
+
+  return card;
 }
 
 function renderList(target, items) {
