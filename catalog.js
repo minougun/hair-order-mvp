@@ -187,7 +187,7 @@ export const HAIR_CATALOG = [
     title: "梅田ビジネスショート",
     subtitle: "清潔感と収まりを両立した関西向け定番",
     sourceName: "L-MARK 梅田店",
-    location: location(34.7047, 135.4979, "大阪府", "梅田", ["大阪", "大阪駅", "北区", "関西"]),
+    location: location(34.7047, 135.4979, "大阪府", "梅田", ["大阪", "大阪駅", "北区", "梅田駅", "宝塚", "関西"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000790795/style/L265695495.html",
       "https://beauty.hotpepper.jp/slnH000790795/",
@@ -201,7 +201,7 @@ export const HAIR_CATALOG = [
     title: "なんばセンターパート",
     subtitle: "韓国寄せの落ち感シルエット",
     sourceName: "FRAME + 御堂筋難波店",
-    location: location(34.6672, 135.5009, "大阪府", "なんば", ["大阪", "難波", "心斎橋", "中央区", "関西"]),
+    location: location(34.6672, 135.5009, "大阪府", "なんば", ["大阪", "難波", "心斎橋", "中央区", "宝塚", "関西"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000577126/style/L181750961.html",
       "https://beauty.hotpepper.jp/slnH000577126/",
@@ -229,7 +229,7 @@ export const HAIR_CATALOG = [
     title: "神戸ビジネスショート",
     subtitle: "職場でも扱いやすい再現性重視",
     sourceName: "Salon de aim",
-    location: location(34.6937, 135.1956, "兵庫県", "三宮", ["神戸", "兵庫", "三ノ宮", "中央区", "関西"]),
+    location: location(34.6937, 135.1956, "兵庫県", "三宮", ["神戸", "兵庫", "三ノ宮", "中央区", "宝塚", "西宮", "関西"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000746703/style/L239012354.html",
       "https://beauty.hotpepper.jp/slnH000746703/",
@@ -243,7 +243,7 @@ export const HAIR_CATALOG = [
     title: "神戸ウェーブレイヤー",
     subtitle: "うねりを活かすカジュアル質感",
     sourceName: "source hair atelier",
-    location: location(34.6929, 135.1949, "兵庫県", "三宮", ["神戸", "兵庫", "三ノ宮", "元町", "関西"]),
+    location: location(34.6929, 135.1949, "兵庫県", "三宮", ["神戸", "兵庫", "三ノ宮", "元町", "宝塚", "西宮", "関西"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000746031/style/L259847250.html",
       "https://beauty.hotpepper.jp/slnH000746031/",
@@ -257,7 +257,7 @@ export const HAIR_CATALOG = [
     title: "神戸まとまりショート",
     subtitle: "広がりを抑えた扱いやすいフォルム",
     sourceName: "Lumiere 神戸",
-    location: location(34.6948, 135.1935, "兵庫県", "三宮", ["神戸", "兵庫", "元町", "三ノ宮", "関西"]),
+    location: location(34.6948, 135.1935, "兵庫県", "三宮", ["神戸", "兵庫", "元町", "三ノ宮", "宝塚", "西宮", "関西"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000748015/style/L242871107.html",
       "https://beauty.hotpepper.jp/slnH000748015/",
@@ -265,6 +265,20 @@ export const HAIR_CATALOG = [
       "https://beauty.hotpepper.jp/slnH000748015/"
     ),
     tags: ["length_short", "goal_clean", "goal_soft", "time_7", "tool_no_iron", "shape_anti_frizz", "style_natural", "occasion_flexible", "gender_female"],
+  },
+  {
+    id: "C19",
+    title: "西宮北口ナチュラルショート",
+    subtitle: "宝塚・西宮エリア向けの扱いやすい質感",
+    sourceName: "NEXUS 西宮北口",
+    location: location(34.7395, 135.3476, "兵庫県", "西宮北口", ["兵庫", "西宮", "宝塚", "阪急宝塚", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000561760/style/L259462985.html",
+      "https://beauty.hotpepper.jp/slnH000561760/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000561760/"
+    ),
+    tags: ["length_short", "goal_business", "goal_clean", "time_3", "tool_no_iron", "shape_control_bangs", "style_natural", "occasion_office", "gender_male"],
   },
 ];
 
@@ -414,13 +428,13 @@ function buildQueryTags(input, result) {
 
 function buildLocationSignal(input) {
   const areaQueryRaw = `${input.areaQuery || ""}`.trim();
-  const areaQuery = normalizeText(areaQueryRaw);
+  const areaTokens = expandAreaTokens(areaQueryRaw);
   const hasCoords =
     input.location && Number.isFinite(input.location.lat) && Number.isFinite(input.location.lng);
 
   return {
-    areaQuery,
     areaQueryRaw,
+    areaTokens,
     coords: hasCoords ? input.location : null,
   };
 }
@@ -456,25 +470,35 @@ function scoreLocation(item, locationSignal) {
     else result.locationScore -= 22;
   }
 
-  if (locationSignal.areaQuery) {
+  if (locationSignal.areaTokens.length > 0) {
     const keywords = [itemLocation.prefecture, itemLocation.area, ...(itemLocation.keywords ?? [])]
       .filter(Boolean)
       .map((value) => String(value));
 
-    const matchedKeyword = keywords.find((keyword) => {
-      const normalized = normalizeText(keyword);
-      if (!normalized) return false;
-      return (
-        normalized.includes(locationSignal.areaQuery) ||
-        locationSignal.areaQuery.includes(normalized)
-      );
-    });
+    let matchedKeyword = "";
+    for (const keyword of keywords) {
+      const normalizedKeyword = normalizeText(keyword);
+      if (!normalizedKeyword) continue;
+
+      const matchedToken = locationSignal.areaTokens.find((token) => {
+        if (!token) return false;
+        return normalizedKeyword.includes(token) || token.includes(normalizedKeyword);
+      });
+
+      if (matchedToken) {
+        matchedKeyword = keyword;
+        break;
+      }
+    }
 
     if (matchedKeyword) {
-      result.locationScore += 10;
+      result.locationScore += 24;
+      if (locationSignal.coords) {
+        result.locationScore += 4;
+      }
       result.matchedAreaKeyword = matchedKeyword;
     } else if (!locationSignal.coords) {
-      result.locationScore -= 1;
+      result.locationScore -= 3;
     }
   }
 
@@ -498,7 +522,7 @@ function buildReasonText(item) {
 }
 
 function buildLocationHint(locationSignal, selectedItems) {
-  if (!locationSignal.coords && !locationSignal.areaQuery) {
+  if (!locationSignal.coords && locationSignal.areaTokens.length === 0) {
     return "地域未設定のため、髪型条件を優先して表示しています。";
   }
 
@@ -535,6 +559,53 @@ function normalizeText(value) {
     .toLowerCase()
     .replace(/[\s　\-ー_]/g, "")
     .normalize("NFKC");
+}
+
+function normalizeAreaToken(value) {
+  return normalizeText(value).replace(/(駅|jr|阪急|阪神|地下鉄|メトロ|線|口|出口|電鉄|本線)/g, "");
+}
+
+function expandAreaTokens(areaQueryRaw) {
+  const raw = `${areaQueryRaw || ""}`.trim();
+  if (raw.length === 0) return [];
+
+  const tokens = new Set();
+  const base = normalizeAreaToken(raw);
+  if (base) tokens.add(base);
+
+  const splitTokens = raw.split(/[\/、,・\s　]+/).map(normalizeAreaToken).filter(Boolean);
+  for (const token of splitTokens) tokens.add(token);
+
+  const aliasMap = {
+    宝塚: ["宝塚", "西宮", "兵庫", "神戸", "三宮", "関西"],
+    西宮: ["西宮", "兵庫", "宝塚", "神戸", "関西"],
+    三宮: ["三宮", "神戸", "兵庫", "元町", "関西"],
+    神戸: ["神戸", "三宮", "元町", "兵庫", "関西"],
+    梅田: ["梅田", "大阪", "大阪駅", "なんば", "心斎橋", "関西"],
+    なんば: ["なんば", "難波", "心斎橋", "大阪", "関西"],
+    心斎橋: ["心斎橋", "なんば", "難波", "大阪", "関西"],
+    京都: ["京都", "河原町", "三条", "四条", "関西"],
+    飯田橋: ["飯田橋", "東京", "新宿", "関東"],
+    銀座: ["銀座", "東京", "有楽町", "関東"],
+    渋谷: ["渋谷", "原宿", "東京", "関東"],
+  };
+
+  for (const [key, values] of Object.entries(aliasMap)) {
+    const normalizedKey = normalizeAreaToken(key);
+    if (!normalizedKey) continue;
+    const keyMatched =
+      tokens.has(normalizedKey) ||
+      (base.length > 0 && (base.includes(normalizedKey) || normalizedKey.includes(base)));
+    if (!keyMatched) {
+      continue;
+    }
+    for (const value of values) {
+      const normalized = normalizeAreaToken(value);
+      if (normalized) tokens.add(normalized);
+    }
+  }
+
+  return [...tokens];
 }
 
 function tagWeight(tag) {
