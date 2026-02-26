@@ -95,6 +95,29 @@
           </fieldset>
 
           <fieldset>
+            <legend>地域（任意）</legend>
+            <div class="grid-2 location-grid">
+              <label>最寄駅・エリア
+                <input
+                  id="area-query"
+                  name="areaQuery"
+                  type="text"
+                  placeholder="例: 梅田 / 心斎橋 / 三宮 / 京都駅"
+                  autocomplete="address-level2"
+                />
+              </label>
+              <div class="location-actions">
+                <button id="detect-location" type="button" class="ghost">現在地を使う（GPS）</button>
+                <p id="location-status" class="location-status">
+                  位置情報は任意です。許可すると近いサロンを優先表示します。
+                </p>
+              </div>
+            </div>
+            <input id="latitude" name="latitude" type="hidden" />
+            <input id="longitude" name="longitude" type="hidden" />
+          </fieldset>
+
+          <fieldset>
             <legend>困りごと（複数可）</legend>
             <div class="chip-group">
               <label class="chip"><input type="checkbox" name="concerns" value="front_split" />前髪割れ</label>
@@ -164,6 +187,7 @@
         <article class="result-block">
           <h3>おすすめヘアカタログ</h3>
           <p class="catalog-caption">一番近い1件と、代替候補を2件を「外部リンクカード」で表示します。</p>
+          <p id="catalog-location-hint" class="catalog-location-hint"></p>
           <div id="catalog-embed-wrap" class="catalog-embed-wrap" hidden>
             <p class="catalog-embed-label">最有力候補のInstagram埋め込み</p>
             <iframe
