@@ -11,7 +11,7 @@ export const HAIR_CATALOG = [
     subtitle: "清潔感が出やすい定番シルエット",
     imageUrl: unsplash("photo-1507003211169-0a1dd7228f2d"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_short", "goal_business", "goal_clean", "time_3", "tool_no_iron", "shape_tight_side", "occasion_office", "style_natural"],
+    tags: ["length_short", "goal_business", "goal_clean", "time_3", "tool_no_iron", "shape_tight_side", "occasion_office", "style_natural", "gender_male"],
   },
   {
     id: "C02",
@@ -19,7 +19,7 @@ export const HAIR_CATALOG = [
     subtitle: "前髪の割れを目立たせにくい設計",
     imageUrl: unsplash("photo-1500648767791-00dcc994a43e"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_short", "goal_clean", "goal_business", "time_3", "tool_no_iron", "shape_control_bangs", "style_natural", "occasion_office"],
+    tags: ["length_short", "goal_clean", "goal_business", "time_3", "tool_no_iron", "shape_control_bangs", "style_natural", "occasion_office", "gender_male"],
   },
   {
     id: "C03",
@@ -27,7 +27,7 @@ export const HAIR_CATALOG = [
     subtitle: "軽い束感でカジュアル寄せ",
     imageUrl: unsplash("photo-1487412720507-e7ab37603c6f"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_short", "goal_casual", "goal_sharp", "time_7", "tool_iron_ok", "style_texture", "shape_volume_top", "occasion_flexible"],
+    tags: ["length_short", "goal_casual", "goal_sharp", "time_7", "tool_iron_ok", "style_texture", "shape_volume_top", "occasion_flexible", "gender_female"],
   },
   {
     id: "C04",
@@ -35,7 +35,7 @@ export const HAIR_CATALOG = [
     subtitle: "ぺたんこ対策向けの立体感重視",
     imageUrl: unsplash("photo-1521572267360-ee0c2909d518"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_short", "goal_clean", "goal_sharp", "time_3", "tool_no_iron", "shape_volume_top", "style_natural", "occasion_office"],
+    tags: ["length_short", "goal_clean", "goal_sharp", "time_3", "tool_no_iron", "shape_volume_top", "style_natural", "occasion_office", "gender_male"],
   },
   {
     id: "C05",
@@ -43,7 +43,7 @@ export const HAIR_CATALOG = [
     subtitle: "落ち感とシャープさの中間",
     imageUrl: unsplash("photo-1544717305-2782549b5136"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_medium", "goal_korean", "goal_sharp", "time_15", "tool_iron_ok", "style_center_part", "style_korean", "occasion_flexible"],
+    tags: ["length_medium", "goal_korean", "goal_sharp", "time_15", "tool_iron_ok", "style_center_part", "style_korean", "occasion_flexible", "gender_male"],
   },
   {
     id: "C06",
@@ -51,7 +51,7 @@ export const HAIR_CATALOG = [
     subtitle: "動きは出しつつ重さも残す",
     imageUrl: unsplash("photo-1494790108377-be9c29b29330"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_medium", "goal_soft", "goal_casual", "time_7", "tool_no_iron", "style_layer", "hair_wavy", "shape_anti_frizz"],
+    tags: ["length_medium", "goal_soft", "goal_casual", "time_7", "tool_no_iron", "style_layer", "hair_wavy", "shape_anti_frizz", "gender_female"],
   },
   {
     id: "C07",
@@ -59,7 +59,7 @@ export const HAIR_CATALOG = [
     subtitle: "広がりを抑えるまとまり設計",
     imageUrl: unsplash("photo-1517841905240-472988babdf9"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_medium", "goal_clean", "goal_soft", "time_7", "tool_no_iron", "shape_anti_frizz", "style_natural", "hair_wavy"],
+    tags: ["length_medium", "goal_clean", "goal_soft", "time_7", "tool_no_iron", "shape_anti_frizz", "style_natural", "hair_wavy", "gender_female"],
   },
   {
     id: "C08",
@@ -67,7 +67,7 @@ export const HAIR_CATALOG = [
     subtitle: "仕事でも浮きにくい輪郭",
     imageUrl: unsplash("photo-1524504388940-b1c1722653e1"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_medium", "goal_business", "goal_clean", "time_7", "tool_no_iron", "shape_tight_side", "occasion_office", "style_natural"],
+    tags: ["length_medium", "goal_business", "goal_clean", "time_7", "tool_no_iron", "shape_tight_side", "occasion_office", "style_natural", "gender_female"],
   },
   {
     id: "C09",
@@ -75,7 +75,7 @@ export const HAIR_CATALOG = [
     subtitle: "乾かすだけ運用向け",
     imageUrl: unsplash("photo-1492288991661-058aa541ff43"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_short", "goal_clean", "time_0", "tool_no_iron", "style_natural", "shape_control_bangs", "occasion_office"],
+    tags: ["length_short", "goal_clean", "time_0", "tool_no_iron", "style_natural", "shape_control_bangs", "occasion_office", "gender_male"],
   },
   {
     id: "C10",
@@ -83,7 +83,7 @@ export const HAIR_CATALOG = [
     subtitle: "サイド膨らみ・ハチ張り対策",
     imageUrl: unsplash("photo-1504257432389-52343af06ae3"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_short", "goal_business", "goal_sharp", "time_3", "tool_no_iron", "shape_tight_side", "shape_volume_top", "occasion_office"],
+    tags: ["length_short", "goal_business", "goal_sharp", "time_3", "tool_no_iron", "shape_tight_side", "shape_volume_top", "occasion_office", "gender_male"],
   },
   {
     id: "C11",
@@ -91,7 +91,7 @@ export const HAIR_CATALOG = [
     subtitle: "うねりを活かすカジュアル仕様",
     imageUrl: unsplash("photo-1519699047748-de8e457a634e"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_medium", "goal_casual", "goal_soft", "time_15", "tool_iron_ok", "style_layer", "hair_wavy", "style_texture"],
+    tags: ["length_medium", "goal_casual", "goal_soft", "time_15", "tool_iron_ok", "style_layer", "hair_wavy", "style_texture", "gender_female"],
   },
   {
     id: "C12",
@@ -99,7 +99,7 @@ export const HAIR_CATALOG = [
     subtitle: "まとまりと軽さのバランス型",
     imageUrl: unsplash("photo-1521119989659-a83eee488004"),
     sourceUrl: "https://unsplash.com/",
-    tags: ["length_long", "goal_soft", "goal_clean", "time_15", "tool_iron_ok", "style_layer", "shape_anti_frizz", "hair_wavy"],
+    tags: ["length_long", "goal_soft", "goal_clean", "time_15", "tool_iron_ok", "style_layer", "shape_anti_frizz", "hair_wavy", "gender_female"],
   },
 ];
 
@@ -153,6 +153,8 @@ const TAG_LABELS = {
   hair_straight: "直毛向け",
   volume_high: "多毛向け",
   volume_low: "少なめ向け",
+  gender_male: "男性向け",
+  gender_female: "女性向け",
 };
 
 export function findBestCatalogItems({ input, result, limit = 3 }) {
@@ -197,6 +199,7 @@ function buildQueryTags(input, result) {
   tags.add(`length_${input.length}`);
   tags.add(`time_${input.setTime}`);
   tags.add(input.iron === "yes" ? "tool_iron_ok" : "tool_no_iron");
+  tags.add(input.gender === "female" ? "gender_female" : "gender_male");
 
   if (input.dressCode === "strict") {
     tags.add("occasion_office");
@@ -235,6 +238,7 @@ function buildQueryTags(input, result) {
 function tagWeight(tag) {
   if (tag.startsWith("goal_")) return 6;
   if (tag.startsWith("shape_")) return 5;
+  if (tag.startsWith("gender_")) return 5;
   if (tag.startsWith("length_")) return 4;
   if (tag.startsWith("time_")) return 3;
   if (tag.startsWith("tool_")) return 3;

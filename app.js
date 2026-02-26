@@ -1,5 +1,6 @@
 import { CONCERN_RULES, GOAL_RULES, ORDER_PRESETS, TIME_RULES } from "./templates.js";
 import { findBestCatalogItems } from "./catalog.js";
+import { analyzeHairAttributes } from "./photo-analyzer.js";
 
 const form = document.getElementById("order-form");
 const resultSection = document.getElementById("result-section");
@@ -13,12 +14,26 @@ const orderTextEl = document.getElementById("order-text");
 const shareTextEl = document.getElementById("share-text");
 const catalogMainEl = document.getElementById("catalog-main");
 const catalogGridEl = document.getElementById("catalog-grid");
+const frontPhotoInput = document.getElementById("front-photo");
+const sidePhotoInput = document.getElementById("side-photo");
+const topPhotoInput = document.getElementById("top-photo");
+const analyzePhotosButton = document.getElementById("analyze-photos");
+const photoStatusEl = document.getElementById("photo-status");
+const photoPredictionsEl = document.getElementById("photo-predictions");
 const copyOrderButton = document.getElementById("copy-order");
 const copyShareButton = document.getElementById("copy-share");
 const downloadCardButton = document.getElementById("download-card");
 const cardDownloadLink = document.getElementById("card-download-link");
 const shareCardCanvas = document.getElementById("share-card-canvas");
 let latestResult = null;
+const VALUE_LABELS = {
+  gender: { male: "男性", female: "女性" },
+  length: { short: "短め", medium: "中くらい", long: "長め" },
+  volume: { low: "少なめ", normal: "普通", high: "多め" },
+  stiffness: { soft: "柔らかい", normal: "普通", hard: "硬い" },
+  wave: { straight: "直毛", wavy: "うねり", curly: "強いクセ" },
+  crown: { weak: "弱い", normal: "普通", strong: "強い" },
+};
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -45,10 +60,44 @@ downloadCardButton.addEventListener("click", () => {
   cardDownloadLink.click();
 });
 
+analyzePhotosButton.addEventListener("click", async () => {
+  const files = {
+    front: frontPhotoInput.files?.[0] ?? null,
+    side: sidePhotoInput.files?.[0] ?? null,
+    top: topPhotoInput.files?.[0] ?? null,
+  };
+  if (!files.front && !files.side && !files.top) {
+    photoStatusEl.textContent = "写真が未選択です。正面・横・頭頂のいずれかを選んでください。";
+    photoPredictionsEl.innerHTML = "";
+    return;
+  }
+
+  analyzePhotosButton.disabled = true;
+  photoStatusEl.textContent = "写真を解析しています...";
+
+  try {
+    const analysis = await analyzeHairAttributes(files);
+    applyPredictionsToForm(analysis.predictions);
+    renderPhotoPredictions(analysis);
+
+    const used = [];
+    if (analysis.usedPhotos.front) used.push("正面");
+    if (analysis.usedPhotos.side) used.push("横");
+    if (analysis.usedPhotos.top) used.push("頭頂");
+    photoStatusEl.textContent = `解析完了: ${used.join(" / ")} 写真を使用して入力値を更新しました。必要に応じて手動修正してください。`;
+  } catch (error) {
+    photoStatusEl.textContent = `解析に失敗しました: ${error instanceof Error ? error.message : "不明なエラー"}`;
+    photoPredictionsEl.innerHTML = "";
+  } finally {
+    analyzePhotosButton.disabled = false;
+  }
+});
+
 function collectInput() {
   const data = new FormData(form);
 
   return {
+    gender: data.get("gender") || "male",
     length: data.get("length") || "short",
     volume: data.get("volume") || "normal",
     stiffness: data.get("stiffness") || "normal",
@@ -172,6 +221,7 @@ function generateOrder(input) {
   });
 
   const shareText = buildShareText({
+    gender: input.gender,
     badge: preset.badge,
     concerns: concernLabels,
     goals: goalLabels,
@@ -191,6 +241,7 @@ function generateOrder(input) {
     matchedPreset: preset.title,
     concernLabels,
     goalLabels,
+    gender: input.gender,
     setTime: input.setTime,
   };
 
@@ -285,10 +336,12 @@ function buildOrderText({ summary, specifics, ng, ask, search }) {
   ].join("\n");
 }
 
-function buildShareText({ badge, concerns, goals, setTime, summary }) {
+function buildShareText({ gender, badge, concerns, goals, setTime, summary }) {
+  const genderText = VALUE_LABELS.gender[gender] ?? "未設定";
   const concernText = concerns.length > 0 ? concerns.join(" / ") : "悩み未選択";
   const goalText = goals.length > 0 ? goals.join(" / ") : "目標未選択";
   return [
+    `対象: ${genderText}`,
     `称号: ${badge}`,
     `悩み: ${concernText}`,
     `方向性: ${goalText}`,
@@ -363,9 +416,11 @@ function drawShareCard(canvas, result) {
   y += 64;
   const concernText = result.concernLabels.length > 0 ? result.concernLabels.join(" / ") : "悩み未選択";
   const goalText = result.goalLabels.length > 0 ? result.goalLabels.join(" / ") : "方向性未選択";
+  const genderText = VALUE_LABELS.gender[result.gender] ?? "未設定";
 
   ctx.fillStyle = "#304247";
   ctx.font = "600 20px 'Zen Kaku Gothic New', sans-serif";
+  y = drawWrappedText(ctx, `対象: ${genderText}`, contentX, y, contentW, 30);
   y = drawWrappedText(ctx, `悩み: ${concernText}`, contentX, y, contentW, 30);
   y = drawWrappedText(ctx, `方向性: ${goalText}`, contentX, y + 2, contentW, 30);
   y = drawWrappedText(ctx, `セット時間: ${result.setTime}分`, contentX, y + 2, contentW, 30);
@@ -508,6 +563,38 @@ function renderCatalogCard(item, isMain) {
   card.append(image, body);
 
   return card;
+}
+
+function applyPredictionsToForm(predictions) {
+  const mapping = ["length", "volume", "stiffness", "wave", "crown"];
+  for (const key of mapping) {
+    const value = predictions[key];
+    if (!value) continue;
+    const input = form.elements.namedItem(key);
+    if (input && "value" in input) {
+      input.value = value;
+    }
+  }
+}
+
+function renderPhotoPredictions(analysis) {
+  const rows = [
+    { key: "length", label: "長さ" },
+    { key: "volume", label: "量" },
+    { key: "stiffness", label: "硬さ" },
+    { key: "wave", label: "クセ" },
+    { key: "crown", label: "つむじ" },
+  ];
+
+  photoPredictionsEl.innerHTML = "";
+  for (const row of rows) {
+    const li = document.createElement("li");
+    const value = analysis.predictions[row.key];
+    const valueLabel = VALUE_LABELS[row.key]?.[value] ?? value;
+    const confidence = Math.round((analysis.confidence[row.key] ?? 0) * 100);
+    li.textContent = `${row.label}: ${valueLabel}（推定信頼度 ${confidence}%）`;
+    photoPredictionsEl.appendChild(li);
+  }
 }
 
 function renderList(target, items) {

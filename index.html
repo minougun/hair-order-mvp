@@ -32,6 +32,12 @@
           <fieldset>
             <legend>現状</legend>
             <div class="grid-2">
+              <label>性別
+                <select name="gender">
+                  <option value="male" selected>男性</option>
+                  <option value="female">女性</option>
+                </select>
+              </label>
               <label>長さ
                 <select name="length">
                   <option value="short">短め</option>
@@ -68,6 +74,24 @@
                 </select>
               </label>
             </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>写真から自動推定（任意）</legend>
+            <div class="photo-grid">
+              <label>正面写真
+                <input id="front-photo" name="frontPhoto" type="file" accept="image/*" />
+              </label>
+              <label>横写真
+                <input id="side-photo" name="sidePhoto" type="file" accept="image/*" />
+              </label>
+              <label>頭頂写真（つむじ）
+                <input id="top-photo" name="topPhoto" type="file" accept="image/*" />
+              </label>
+            </div>
+            <button id="analyze-photos" type="button" class="ghost">写真を解析して入力に反映</button>
+            <p id="photo-status" class="photo-status">正面・横・頭頂の3枚を入れると推定精度が上がります。</p>
+            <ul id="photo-predictions" class="photo-predictions"></ul>
           </fieldset>
 
           <fieldset>
