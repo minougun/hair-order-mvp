@@ -1,7 +1,11 @@
-const IMG_PARAMS = "auto=format&fit=crop&w=1200&q=80";
+const DEFAULT_BOOKING_URL = "https://beauty.hotpepper.jp/";
 
-function unsplash(photoPath) {
-  return `https://images.unsplash.com/${photoPath}?${IMG_PARAMS}`;
+function links(official, instagram, booking = DEFAULT_BOOKING_URL) {
+  return [
+    { label: "公式サイト", url: official },
+    { label: "Instagram", url: instagram },
+    { label: "予約ページ", url: booking },
+  ];
 }
 
 export const HAIR_CATALOG = [
@@ -9,96 +13,144 @@ export const HAIR_CATALOG = [
     id: "C01",
     title: "ビジネスショート（タイトサイド）",
     subtitle: "清潔感が出やすい定番シルエット",
-    imageUrl: unsplash("photo-1507003211169-0a1dd7228f2d"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "OCEAN TOKYO",
+    externalLinks: links(
+      "https://www.oceantokyo.com/",
+      "https://www.instagram.com/oceantokyo_official/",
+      "https://beauty.hotpepper.jp/slnH000264498/"
+    ),
     tags: ["length_short", "goal_business", "goal_clean", "time_3", "tool_no_iron", "shape_tight_side", "occasion_office", "style_natural", "gender_male"],
   },
   {
     id: "C02",
     title: "ナチュラルショート（前髪コントロール）",
     subtitle: "前髪の割れを目立たせにくい設計",
-    imageUrl: unsplash("photo-1500648767791-00dcc994a43e"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "LIPPS hair",
+    externalLinks: links(
+      "https://lipps-hair.com/",
+      "https://www.instagram.com/lipps_hair/",
+      "https://lipps-hair.com/reservation/"
+    ),
     tags: ["length_short", "goal_clean", "goal_business", "time_3", "tool_no_iron", "shape_control_bangs", "style_natural", "occasion_office", "gender_male"],
   },
   {
     id: "C03",
     title: "テクスチャーショート",
     subtitle: "軽い束感でカジュアル寄せ",
-    imageUrl: unsplash("photo-1487412720507-e7ab37603c6f"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "SHIMA",
+    externalLinks: links(
+      "https://www.shima-hair.com/",
+      "https://www.instagram.com/shima_official_account/",
+      "https://www.shima-hair.com/reserve/"
+    ),
     tags: ["length_short", "goal_casual", "goal_sharp", "time_7", "tool_iron_ok", "style_texture", "shape_volume_top", "occasion_flexible", "gender_female"],
   },
   {
     id: "C04",
     title: "トップボリュームショート",
     subtitle: "ぺたんこ対策向けの立体感重視",
-    imageUrl: unsplash("photo-1521572267360-ee0c2909d518"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "OCEAN TOKYO",
+    externalLinks: links(
+      "https://www.oceantokyo.com/",
+      "https://www.instagram.com/oceantokyo_official/",
+      "https://beauty.hotpepper.jp/slnH000264498/"
+    ),
     tags: ["length_short", "goal_clean", "goal_sharp", "time_3", "tool_no_iron", "shape_volume_top", "style_natural", "occasion_office", "gender_male"],
   },
   {
     id: "C05",
     title: "センターパート（韓国寄せ）",
     subtitle: "落ち感とシャープさの中間",
-    imageUrl: unsplash("photo-1544717305-2782549b5136"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "LIPPS hair",
+    externalLinks: links(
+      "https://lipps-hair.com/",
+      "https://www.instagram.com/lipps_hair/",
+      "https://lipps-hair.com/reservation/"
+    ),
     tags: ["length_medium", "goal_korean", "goal_sharp", "time_15", "tool_iron_ok", "style_center_part", "style_korean", "occasion_flexible", "gender_male"],
   },
   {
     id: "C06",
     title: "ミディアムレイヤー（柔らかめ）",
     subtitle: "動きは出しつつ重さも残す",
-    imageUrl: unsplash("photo-1494790108377-be9c29b29330"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "MINX",
+    externalLinks: links(
+      "https://minx-net.co.jp/",
+      "https://www.instagram.com/minx_hair/",
+      "https://8eca03.b-merit.jp/z3SPb7/web/reserve1/?from_coupon=1&no_coupon=1&redirect=1"
+    ),
     tags: ["length_medium", "goal_soft", "goal_casual", "time_7", "tool_no_iron", "style_layer", "hair_wavy", "shape_anti_frizz", "gender_female"],
   },
   {
     id: "C07",
     title: "収まり重視ミディアム",
     subtitle: "広がりを抑えるまとまり設計",
-    imageUrl: unsplash("photo-1517841905240-472988babdf9"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "GARDEN",
+    externalLinks: links(
+      "https://www.garden-hair.jp/",
+      "https://www.instagram.com/garden_hair/",
+      "https://www.garden-hair.jp/reserve/"
+    ),
     tags: ["length_medium", "goal_clean", "goal_soft", "time_7", "tool_no_iron", "shape_anti_frizz", "style_natural", "hair_wavy", "gender_female"],
   },
   {
     id: "C08",
     title: "オフィス向けミディアムショート",
     subtitle: "仕事でも浮きにくい輪郭",
-    imageUrl: unsplash("photo-1524504388940-b1c1722653e1"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "GARDEN",
+    externalLinks: links(
+      "https://www.garden-hair.jp/",
+      "https://www.instagram.com/garden_hair/",
+      "https://www.garden-hair.jp/reserve/"
+    ),
     tags: ["length_medium", "goal_business", "goal_clean", "time_7", "tool_no_iron", "shape_tight_side", "occasion_office", "style_natural", "gender_female"],
   },
   {
     id: "C09",
     title: "ノーセット寄りショート",
     subtitle: "乾かすだけ運用向け",
-    imageUrl: unsplash("photo-1492288991661-058aa541ff43"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "OCEAN TOKYO",
+    externalLinks: links(
+      "https://www.oceantokyo.com/",
+      "https://www.instagram.com/oceantokyo_official/",
+      "https://beauty.hotpepper.jp/slnH000264498/"
+    ),
     tags: ["length_short", "goal_clean", "time_0", "tool_no_iron", "style_natural", "shape_control_bangs", "occasion_office", "gender_male"],
   },
   {
     id: "C10",
     title: "ワイド抑制ショート",
     subtitle: "サイド膨らみ・ハチ張り対策",
-    imageUrl: unsplash("photo-1504257432389-52343af06ae3"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "LIPPS hair",
+    externalLinks: links(
+      "https://lipps-hair.com/",
+      "https://www.instagram.com/lipps_hair/",
+      "https://lipps-hair.com/reservation/"
+    ),
     tags: ["length_short", "goal_business", "goal_sharp", "time_3", "tool_no_iron", "shape_tight_side", "shape_volume_top", "occasion_office", "gender_male"],
   },
   {
     id: "C11",
     title: "ウェーブ活かしミディアム",
     subtitle: "うねりを活かすカジュアル仕様",
-    imageUrl: unsplash("photo-1519699047748-de8e457a634e"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "ALBUM",
+    externalLinks: links(
+      "https://www.album-hair.com/",
+      "https://www.instagram.com/album_hair/",
+      DEFAULT_BOOKING_URL
+    ),
     tags: ["length_medium", "goal_casual", "goal_soft", "time_15", "tool_iron_ok", "style_layer", "hair_wavy", "style_texture", "gender_female"],
   },
   {
     id: "C12",
     title: "ロングレイヤー（柔らか質感）",
     subtitle: "まとまりと軽さのバランス型",
-    imageUrl: unsplash("photo-1521119989659-a83eee488004"),
-    sourceUrl: "https://unsplash.com/",
+    sourceName: "AFLOAT",
+    externalLinks: links(
+      "https://afloat.co.jp/",
+      "https://www.instagram.com/afloat_japan/",
+      DEFAULT_BOOKING_URL
+    ),
     tags: ["length_long", "goal_soft", "goal_clean", "time_15", "tool_iron_ok", "style_layer", "shape_anti_frizz", "hair_wavy", "gender_female"],
   },
 ];

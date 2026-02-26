@@ -523,16 +523,6 @@ function renderCatalogCard(item, isMain) {
   const card = document.createElement("article");
   card.className = isMain ? "catalog-card catalog-card-main" : "catalog-card";
 
-  const image = document.createElement("img");
-  image.className = "catalog-image";
-  image.src = item.imageUrl;
-  image.alt = `${item.title}の参考画像`;
-  image.loading = "lazy";
-  image.referrerPolicy = "no-referrer";
-  image.addEventListener("error", () => {
-    image.style.display = "none";
-  });
-
   const body = document.createElement("div");
   body.className = "catalog-body";
 
@@ -548,19 +538,29 @@ function renderCatalogCard(item, isMain) {
   subtitle.className = "catalog-subtitle";
   subtitle.textContent = item.subtitle;
 
+  const source = document.createElement("p");
+  source.className = "catalog-source";
+  source.textContent = `参照元: ${item.sourceName}`;
+
   const reason = document.createElement("p");
   reason.className = "catalog-reason";
   reason.textContent = `一致: ${item.reason}`;
 
-  const link = document.createElement("a");
-  link.className = "catalog-link";
-  link.href = item.sourceUrl;
-  link.target = "_blank";
-  link.rel = "noreferrer noopener";
-  link.textContent = "画像ソースを開く";
+  const linkWrap = document.createElement("div");
+  linkWrap.className = "catalog-link-wrap";
 
-  body.append(rank, title, subtitle, reason, link);
-  card.append(image, body);
+  for (const linkInfo of item.externalLinks ?? []) {
+    const link = document.createElement("a");
+    link.className = "catalog-link";
+    link.href = linkInfo.url;
+    link.target = "_blank";
+    link.rel = "noreferrer noopener";
+    link.textContent = linkInfo.label;
+    linkWrap.appendChild(link);
+  }
+
+  body.append(rank, title, subtitle, source, reason, linkWrap);
+  card.append(body);
 
   return card;
 }

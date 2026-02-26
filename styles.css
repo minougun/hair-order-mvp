@@ -284,7 +284,6 @@ textarea {
 }
 
 .catalog-card {
-  overflow: hidden;
   border: 1px solid #cfd8cc;
   border-radius: 13px;
   background: #f9fffb;
@@ -293,14 +292,6 @@ textarea {
 .catalog-card-main {
   border-width: 2px;
   border-color: #6ab7ae;
-}
-
-.catalog-image {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  display: block;
-  background: linear-gradient(120deg, #d8ece7, #f8e5d0);
 }
 
 .catalog-body {
@@ -327,12 +318,31 @@ textarea {
   color: #4a5f63;
 }
 
+.catalog-source {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  color: #2f7771;
+}
+
+.catalog-link-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 9px;
+}
+
 .catalog-link {
-  display: inline-block;
-  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 102px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #9bc8c3;
+  background: #ecfffc;
   font-size: 0.82rem;
   color: #0b6660;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .result-block ul {
