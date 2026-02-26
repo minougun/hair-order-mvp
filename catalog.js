@@ -6,7 +6,11 @@ function links(styleUrl, official, instagram, booking = DEFAULT_BOOKING_URL) {
     { label: "公式サイト", url: official },
     { label: "Instagram", url: instagram },
     { label: "予約ページ", url: booking },
-  ];
+  ].filter((item) => typeof item.url === "string" && item.url.trim().length > 0);
+}
+
+function location(lat, lng, prefecture, area, keywords = []) {
+  return { lat, lng, prefecture, area, keywords };
 }
 
 export const HAIR_CATALOG = [
@@ -15,6 +19,7 @@ export const HAIR_CATALOG = [
     title: "ビジネスショート（タイトサイド）",
     subtitle: "清潔感が出やすい定番シルエット",
     sourceName: "AFLOAT GINZA",
+    location: location(35.6718, 139.7652, "東京都", "銀座", ["東京", "中央区", "有楽町", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000233454/style/L272811465.html",
       "https://afloat.co.jp/",
@@ -28,6 +33,7 @@ export const HAIR_CATALOG = [
     title: "ナチュラルショート（前髪コントロール）",
     subtitle: "前髪の割れを目立たせにくい設計",
     sourceName: "upis 飯田橋",
+    location: location(35.7026, 139.7446, "東京都", "飯田橋", ["東京", "千代田区", "新宿区", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000406803/style/L272810551.html",
       "https://lipps-hair.com/",
@@ -41,6 +47,7 @@ export const HAIR_CATALOG = [
     title: "テクスチャーショート",
     subtitle: "軽い束感でカジュアル寄せ",
     sourceName: "EARTH 八潮店",
+    location: location(35.8073, 139.8449, "埼玉県", "八潮", ["埼玉", "八潮市", "つくばエクスプレス", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000444665/style/L272811664.html",
       "https://www.shima-hair.com/",
@@ -54,6 +61,7 @@ export const HAIR_CATALOG = [
     title: "トップボリュームショート",
     subtitle: "ぺたんこ対策向けの立体感重視",
     sourceName: "OCEAN TOKYO",
+    location: location(35.6696, 139.7066, "東京都", "原宿", ["東京", "渋谷区", "表参道", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000264498/style/L242723149.html",
       "https://www.oceantokyo.com/",
@@ -67,6 +75,7 @@ export const HAIR_CATALOG = [
     title: "センターパート（韓国寄せ）",
     subtitle: "落ち感とシャープさの中間",
     sourceName: "ANSWER 渋谷",
+    location: location(35.6594, 139.7003, "東京都", "渋谷", ["東京", "渋谷区", "道玄坂", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000759403/style/L253765222.html",
       "https://lipps-hair.com/",
@@ -80,6 +89,7 @@ export const HAIR_CATALOG = [
     title: "ミディアムレイヤー（柔らかめ）",
     subtitle: "動きは出しつつ重さも残す",
     sourceName: "ROGUE",
+    location: location(35.6677, 139.7124, "東京都", "表参道", ["東京", "港区", "南青山", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000722048/style/L236611163.html",
       "https://minx-net.co.jp/",
@@ -93,6 +103,7 @@ export const HAIR_CATALOG = [
     title: "収まり重視ミディアム",
     subtitle: "広がりを抑えるまとまり設計",
     sourceName: "AHL creation",
+    location: location(35.7299, 139.7108, "東京都", "池袋", ["東京", "豊島区", "池袋駅", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000559325/style/L272810829.html",
       "https://www.garden-hair.jp/",
@@ -106,6 +117,7 @@ export const HAIR_CATALOG = [
     title: "オフィス向けミディアムショート",
     subtitle: "仕事でも浮きにくい輪郭",
     sourceName: "EARTH 八潮店",
+    location: location(35.8073, 139.8449, "埼玉県", "八潮", ["埼玉", "八潮市", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000444665/style/L272806959.html",
       "https://www.garden-hair.jp/",
@@ -119,6 +131,7 @@ export const HAIR_CATALOG = [
     title: "ノーセット寄りショート",
     subtitle: "乾かすだけ運用向け",
     sourceName: "upis 飯田橋",
+    location: location(35.7026, 139.7446, "東京都", "飯田橋", ["東京", "千代田区", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000406803/style/L272810780.html",
       "https://www.oceantokyo.com/",
@@ -132,6 +145,7 @@ export const HAIR_CATALOG = [
     title: "ワイド抑制ショート",
     subtitle: "サイド膨らみ・ハチ張り対策",
     sourceName: "anis musee",
+    location: location(35.6657, 139.7403, "東京都", "六本木", ["東京", "港区", "六本木", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000437479/style/L272810684.html",
       "https://lipps-hair.com/",
@@ -145,6 +159,7 @@ export const HAIR_CATALOG = [
     title: "ウェーブ活かしミディアム",
     subtitle: "うねりを活かすカジュアル仕様",
     sourceName: "syn",
+    location: location(35.6603, 139.6983, "東京都", "渋谷", ["東京", "渋谷区", "神南", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000346025/style/L172278688.html",
       "https://www.album-hair.com/",
@@ -158,6 +173,7 @@ export const HAIR_CATALOG = [
     title: "ロングレイヤー（柔らか質感）",
     subtitle: "まとまりと軽さのバランス型",
     sourceName: "ROGUE",
+    location: location(35.6677, 139.7124, "東京都", "表参道", ["東京", "港区", "南青山", "関東"]),
     externalLinks: links(
       "https://beauty.hotpepper.jp/slnH000722048/style/L236611163.html",
       "https://afloat.co.jp/",
@@ -165,6 +181,90 @@ export const HAIR_CATALOG = [
       DEFAULT_BOOKING_URL
     ),
     tags: ["length_long", "goal_soft", "goal_clean", "time_15", "tool_iron_ok", "style_layer", "shape_anti_frizz", "hair_wavy", "gender_female"],
+  },
+  {
+    id: "C13",
+    title: "梅田ビジネスショート",
+    subtitle: "清潔感と収まりを両立した関西向け定番",
+    sourceName: "L-MARK 梅田店",
+    location: location(34.7047, 135.4979, "大阪府", "梅田", ["大阪", "大阪駅", "北区", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000790795/style/L265695495.html",
+      "https://beauty.hotpepper.jp/slnH000790795/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000790795/"
+    ),
+    tags: ["length_short", "goal_business", "goal_clean", "time_3", "tool_no_iron", "shape_tight_side", "style_natural", "occasion_office", "gender_male"],
+  },
+  {
+    id: "C14",
+    title: "なんばセンターパート",
+    subtitle: "韓国寄せの落ち感シルエット",
+    sourceName: "FRAME + 御堂筋難波店",
+    location: location(34.6672, 135.5009, "大阪府", "なんば", ["大阪", "難波", "心斎橋", "中央区", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000577126/style/L181750961.html",
+      "https://beauty.hotpepper.jp/slnH000577126/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000577126/"
+    ),
+    tags: ["length_medium", "goal_korean", "goal_sharp", "time_15", "tool_iron_ok", "style_center_part", "style_korean", "occasion_flexible", "gender_male"],
+  },
+  {
+    id: "C15",
+    title: "京都ナチュラルレイヤー",
+    subtitle: "柔らかくまとまるミディアム設計",
+    sourceName: "freera 京都河原町三条店",
+    location: location(35.0082, 135.7682, "京都府", "河原町", ["京都", "三条", "四条", "中京区", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000519584/style/L191129210.html",
+      "https://beauty.hotpepper.jp/slnH000519584/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000519584/"
+    ),
+    tags: ["length_medium", "goal_soft", "goal_casual", "time_7", "tool_no_iron", "style_layer", "hair_wavy", "shape_anti_frizz", "gender_female"],
+  },
+  {
+    id: "C16",
+    title: "神戸ビジネスショート",
+    subtitle: "職場でも扱いやすい再現性重視",
+    sourceName: "Salon de aim",
+    location: location(34.6937, 135.1956, "兵庫県", "三宮", ["神戸", "兵庫", "三ノ宮", "中央区", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000746703/style/L239012354.html",
+      "https://beauty.hotpepper.jp/slnH000746703/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000746703/"
+    ),
+    tags: ["length_short", "goal_business", "goal_clean", "time_3", "tool_no_iron", "shape_control_bangs", "style_natural", "occasion_office", "gender_male"],
+  },
+  {
+    id: "C17",
+    title: "神戸ウェーブレイヤー",
+    subtitle: "うねりを活かすカジュアル質感",
+    sourceName: "source hair atelier",
+    location: location(34.6929, 135.1949, "兵庫県", "三宮", ["神戸", "兵庫", "三ノ宮", "元町", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000746031/style/L259847250.html",
+      "https://beauty.hotpepper.jp/slnH000746031/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000746031/"
+    ),
+    tags: ["length_medium", "goal_casual", "goal_soft", "time_15", "tool_iron_ok", "style_layer", "style_texture", "hair_wavy", "gender_female"],
+  },
+  {
+    id: "C18",
+    title: "神戸まとまりショート",
+    subtitle: "広がりを抑えた扱いやすいフォルム",
+    sourceName: "Lumiere 神戸",
+    location: location(34.6948, 135.1935, "兵庫県", "三宮", ["神戸", "兵庫", "元町", "三ノ宮", "関西"]),
+    externalLinks: links(
+      "https://beauty.hotpepper.jp/slnH000748015/style/L242871107.html",
+      "https://beauty.hotpepper.jp/slnH000748015/",
+      "",
+      "https://beauty.hotpepper.jp/slnH000748015/"
+    ),
+    tags: ["length_short", "goal_clean", "goal_soft", "time_7", "tool_no_iron", "shape_anti_frizz", "style_natural", "occasion_flexible", "gender_female"],
   },
 ];
 
@@ -225,6 +325,7 @@ const TAG_LABELS = {
 export function findBestCatalogItems({ input, result, limit = 3 }) {
   const queryTags = buildQueryTags(input, result);
   const querySet = new Set(queryTags);
+  const locationSignal = buildLocationSignal(input);
 
   const scored = HAIR_CATALOG.map((item) => {
     const matchedTags = item.tags.filter((tag) => querySet.has(tag));
@@ -238,23 +339,34 @@ export function findBestCatalogItems({ input, result, limit = 3 }) {
     if (timeTag && !querySet.has(timeTag)) score -= 1;
     if (toolTag === "tool_iron_ok" && querySet.has("tool_no_iron")) score -= 2;
 
+    const locationResult = scoreLocation(item, locationSignal);
+    score += locationResult.locationScore;
+
     return {
       ...item,
       score,
       matchedTags,
       matchedLabels: matchedTags.map((tag) => TAG_LABELS[tag]).filter(Boolean),
+      distanceKm: locationResult.distanceKm,
+      matchedAreaKeyword: locationResult.matchedAreaKeyword,
     };
-  }).sort((a, b) => b.score - a.score);
+  }).sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    const distanceA = Number.isFinite(a.distanceKm) ? a.distanceKm : Number.POSITIVE_INFINITY;
+    const distanceB = Number.isFinite(b.distanceKm) ? b.distanceKm : Number.POSITIVE_INFINITY;
+    return distanceA - distanceB;
+  });
 
   const selected = scored.slice(0, limit).map((item, index) => ({
     ...item,
     rank: index + 1,
-    reason: item.matchedLabels.length > 0 ? item.matchedLabels.slice(0, 4).join(" / ") : "汎用候補",
+    reason: buildReasonText(item),
   }));
 
   return {
     queryTags,
     items: selected,
+    locationHint: buildLocationHint(locationSignal, selected),
   };
 }
 
@@ -298,6 +410,131 @@ function buildQueryTags(input, result) {
   if (result.matchedPreset.includes("ビジネス")) tags.add("occasion_office");
 
   return [...tags];
+}
+
+function buildLocationSignal(input) {
+  const areaQueryRaw = `${input.areaQuery || ""}`.trim();
+  const areaQuery = normalizeText(areaQueryRaw);
+  const hasCoords =
+    input.location && Number.isFinite(input.location.lat) && Number.isFinite(input.location.lng);
+
+  return {
+    areaQuery,
+    areaQueryRaw,
+    coords: hasCoords ? input.location : null,
+  };
+}
+
+function scoreLocation(item, locationSignal) {
+  const result = {
+    locationScore: 0,
+    distanceKm: null,
+    matchedAreaKeyword: "",
+  };
+
+  const itemLocation = item.location;
+  if (!itemLocation) return result;
+
+  if (
+    locationSignal.coords &&
+    Number.isFinite(itemLocation.lat) &&
+    Number.isFinite(itemLocation.lng)
+  ) {
+    const distanceKm = haversineKm(
+      locationSignal.coords.lat,
+      locationSignal.coords.lng,
+      itemLocation.lat,
+      itemLocation.lng
+    );
+    result.distanceKm = distanceKm;
+
+    if (distanceKm <= 5) result.locationScore += 20;
+    else if (distanceKm <= 15) result.locationScore += 14;
+    else if (distanceKm <= 40) result.locationScore += 9;
+    else if (distanceKm <= 100) result.locationScore += 3;
+    else if (distanceKm <= 250) result.locationScore -= 8;
+    else result.locationScore -= 22;
+  }
+
+  if (locationSignal.areaQuery) {
+    const keywords = [itemLocation.prefecture, itemLocation.area, ...(itemLocation.keywords ?? [])]
+      .filter(Boolean)
+      .map((value) => String(value));
+
+    const matchedKeyword = keywords.find((keyword) => {
+      const normalized = normalizeText(keyword);
+      if (!normalized) return false;
+      return (
+        normalized.includes(locationSignal.areaQuery) ||
+        locationSignal.areaQuery.includes(normalized)
+      );
+    });
+
+    if (matchedKeyword) {
+      result.locationScore += 10;
+      result.matchedAreaKeyword = matchedKeyword;
+    } else if (!locationSignal.coords) {
+      result.locationScore -= 1;
+    }
+  }
+
+  return result;
+}
+
+function buildReasonText(item) {
+  const reasonParts = [];
+
+  if (item.matchedLabels.length > 0) {
+    reasonParts.push(...item.matchedLabels.slice(0, 3));
+  }
+
+  if (Number.isFinite(item.distanceKm)) {
+    reasonParts.push(`距離${item.distanceKm.toFixed(1)}km`);
+  } else if (item.matchedAreaKeyword) {
+    reasonParts.push(`エリア一致:${item.matchedAreaKeyword}`);
+  }
+
+  return reasonParts.length > 0 ? reasonParts.join(" / ") : "汎用候補";
+}
+
+function buildLocationHint(locationSignal, selectedItems) {
+  if (!locationSignal.coords && !locationSignal.areaQuery) {
+    return "地域未設定のため、髪型条件を優先して表示しています。";
+  }
+
+  const hints = [];
+  if (locationSignal.areaQueryRaw) {
+    hints.push(`エリア「${locationSignal.areaQueryRaw}」を優先`);
+  }
+
+  if (locationSignal.coords) {
+    const nearestWithDistance = selectedItems.find((item) => Number.isFinite(item.distanceKm));
+    if (nearestWithDistance) {
+      hints.push(`現在地優先（最短 約${nearestWithDistance.distanceKm.toFixed(1)}km）`);
+    } else {
+      hints.push("現在地優先（距離情報未設定の候補あり）");
+    }
+  }
+
+  return hints.join(" / ");
+}
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const toRad = (value) => (value * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+function normalizeText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[\s　\-ー_]/g, "")
+    .normalize("NFKC");
 }
 
 function tagWeight(tag) {

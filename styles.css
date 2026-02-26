@@ -163,6 +163,7 @@ input[type="file"] {
 }
 
 select,
+input[type="text"],
 textarea {
   width: 100%;
   border: 1px solid #c6bcae;
@@ -170,6 +171,29 @@ textarea {
   padding: 10px;
   font: inherit;
   background: #fff;
+}
+
+.location-grid {
+  align-items: start;
+}
+
+.location-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.location-actions .ghost {
+  margin-top: 0;
+  width: auto;
+  align-self: start;
+}
+
+.location-status {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #4a5f63;
+  line-height: 1.45;
 }
 
 .chip-group {
@@ -261,6 +285,12 @@ textarea {
   margin: 0 0 10px;
   color: #45555a;
   font-size: 0.86rem;
+}
+
+.catalog-location-hint {
+  margin: 0 0 8px;
+  font-size: 0.84rem;
+  color: #2f7771;
 }
 
 .catalog-note {

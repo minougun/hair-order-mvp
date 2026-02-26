@@ -27,6 +27,12 @@ const copyShareButton = document.getElementById("copy-share");
 const downloadCardButton = document.getElementById("download-card");
 const cardDownloadLink = document.getElementById("card-download-link");
 const shareCardCanvas = document.getElementById("share-card-canvas");
+const detectLocationButton = document.getElementById("detect-location");
+const locationStatusEl = document.getElementById("location-status");
+const latitudeInput = document.getElementById("latitude");
+const longitudeInput = document.getElementById("longitude");
+const areaQueryInput = document.getElementById("area-query");
+const catalogLocationHintEl = document.getElementById("catalog-location-hint");
 let latestResult = null;
 const VALUE_LABELS = {
   gender: { male: "男性", female: "女性" },
@@ -95,8 +101,43 @@ analyzePhotosButton.addEventListener("click", async () => {
   }
 });
 
+if (detectLocationButton && locationStatusEl && latitudeInput && longitudeInput) {
+  detectLocationButton.addEventListener("click", async () => {
+    if (!navigator.geolocation) {
+      locationStatusEl.textContent = "このブラウザでは位置情報を利用できません。最寄駅を手入力してください。";
+      return;
+    }
+
+    detectLocationButton.disabled = true;
+    locationStatusEl.textContent = "現在地を取得しています...";
+
+    try {
+      const position = await requestCurrentPosition();
+      const lat = Number(position.coords.latitude.toFixed(6));
+      const lng = Number(position.coords.longitude.toFixed(6));
+      latitudeInput.value = String(lat);
+      longitudeInput.value = String(lng);
+
+      const areaLabel = await reverseGeocodeArea(lat, lng);
+      if (areaQueryInput && areaLabel && areaQueryInput.value.trim() === "") {
+        areaQueryInput.value = areaLabel;
+      }
+
+      const suffix = areaLabel ? `${areaLabel}周辺` : `緯度${lat} / 経度${lng}`;
+      locationStatusEl.textContent = `現在地を取得しました: ${suffix}`;
+    } catch (error) {
+      locationStatusEl.textContent = `現在地を取得できませんでした: ${toGeolocationErrorMessage(error)}`;
+    } finally {
+      detectLocationButton.disabled = false;
+    }
+  });
+}
+
 function collectInput() {
   const data = new FormData(form);
+  const latitude = Number.parseFloat(`${data.get("latitude") || ""}`);
+  const longitude = Number.parseFloat(`${data.get("longitude") || ""}`);
+  const areaQuery = `${data.get("areaQuery") || ""}`.trim();
 
   return {
     gender: data.get("gender") || "male",
@@ -111,6 +152,11 @@ function collectInput() {
     iron: data.get("iron") || "no",
     dressCode: data.get("dressCode") || "normal",
     maintenance: data.get("maintenance") || "1m",
+    areaQuery,
+    location:
+      Number.isFinite(latitude) && Number.isFinite(longitude)
+        ? { lat: latitude, lng: longitude }
+        : null,
   };
 }
 
@@ -370,6 +416,12 @@ function renderResult(result) {
   orderTextEl.value = result.orderText;
   shareTextEl.value = result.shareText;
   renderCatalog(result.catalog);
+
+  if (catalogLocationHintEl) {
+    const locationHint = result.catalog?.locationHint || "";
+    catalogLocationHintEl.textContent = locationHint;
+    catalogLocationHintEl.hidden = locationHint.length === 0;
+  }
 }
 
 function drawShareCard(canvas, result) {
@@ -548,7 +600,7 @@ function renderCatalogCard(item, isMain) {
 
   const source = document.createElement("p");
   source.className = "catalog-source";
-  source.textContent = `参照元: ${item.sourceName}`;
+  source.textContent = buildCatalogSourceText(item);
 
   const reason = document.createElement("p");
   reason.className = "catalog-reason";
@@ -598,6 +650,73 @@ function toInstagramEmbedUrl(url) {
   } catch {
     return null;
   }
+}
+
+function buildCatalogSourceText(item) {
+  const meta = [];
+
+  if (item?.location?.area) {
+    meta.push(item.location.area);
+  }
+  if (Number.isFinite(item?.distanceKm)) {
+    meta.push(`現在地から約${item.distanceKm.toFixed(1)}km`);
+  } else if (item?.matchedAreaKeyword) {
+    meta.push(`エリア一致: ${item.matchedAreaKeyword}`);
+  }
+
+  if (meta.length === 0) {
+    return `参照元: ${item.sourceName}`;
+  }
+  return `参照元: ${item.sourceName}（${meta.join(" / ")}）`;
+}
+
+function requestCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 5 * 60 * 1000,
+    });
+  });
+}
+
+async function reverseGeocodeArea(lat, lng) {
+  try {
+    const params = new URLSearchParams({
+      format: "jsonv2",
+      lat: String(lat),
+      lon: String(lng),
+      zoom: "10",
+      addressdetails: "1",
+      "accept-language": "ja",
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`);
+    if (!response.ok) return "";
+    const data = await response.json();
+    const address = data?.address ?? {};
+    return (
+      address.city ||
+      address.town ||
+      address.village ||
+      address.county ||
+      address.state_district ||
+      address.state ||
+      ""
+    );
+  } catch {
+    return "";
+  }
+}
+
+function toGeolocationErrorMessage(error) {
+  if (!error || typeof error !== "object") {
+    return "不明なエラー";
+  }
+  const geolocationError = error;
+  if (geolocationError.code === 1) return "位置情報の許可が拒否されました";
+  if (geolocationError.code === 2) return "位置情報を取得できませんでした";
+  if (geolocationError.code === 3) return "位置情報の取得がタイムアウトしました";
+  return geolocationError.message || "不明なエラー";
 }
 
 function applyPredictionsToForm(predictions) {
