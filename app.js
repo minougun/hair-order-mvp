@@ -14,6 +14,8 @@ const orderTextEl = document.getElementById("order-text");
 const shareTextEl = document.getElementById("share-text");
 const catalogMainEl = document.getElementById("catalog-main");
 const catalogGridEl = document.getElementById("catalog-grid");
+const catalogEmbedWrapEl = document.getElementById("catalog-embed-wrap");
+const catalogEmbedFrameEl = document.getElementById("catalog-embed-frame");
 const frontPhotoInput = document.getElementById("front-photo");
 const sidePhotoInput = document.getElementById("side-photo");
 const topPhotoInput = document.getElementById("top-photo");
@@ -505,6 +507,8 @@ function drawRoundedRect(ctx, x, y, width, height, radius, fillStyle) {
 function renderCatalog(catalog) {
   catalogMainEl.innerHTML = "";
   catalogGridEl.innerHTML = "";
+  catalogEmbedWrapEl.hidden = true;
+  catalogEmbedFrameEl.removeAttribute("src");
 
   if (!catalog || !Array.isArray(catalog.items) || catalog.items.length === 0) {
     catalogMainEl.textContent = "該当候補が見つかりませんでした。";
@@ -512,6 +516,7 @@ function renderCatalog(catalog) {
   }
 
   const [mainItem, ...otherItems] = catalog.items;
+  renderCatalogEmbed(mainItem);
   catalogMainEl.appendChild(renderCatalogCard(mainItem, true));
 
   for (const item of otherItems) {
@@ -563,6 +568,33 @@ function renderCatalogCard(item, isMain) {
   card.append(body);
 
   return card;
+}
+
+function renderCatalogEmbed(item) {
+  const instagram = (item.externalLinks ?? []).find((link) => /instagram\\.com/i.test(link.url));
+  if (!instagram) return;
+
+  const embedUrl = toInstagramEmbedUrl(instagram.url);
+  if (!embedUrl) return;
+
+  catalogEmbedFrameEl.src = embedUrl;
+  catalogEmbedWrapEl.hidden = false;
+}
+
+function toInstagramEmbedUrl(url) {
+  try {
+    const parsed = new URL(url);
+    if (!/instagram\\.com$/i.test(parsed.hostname) && !/\\.instagram\\.com$/i.test(parsed.hostname)) {
+      return null;
+    }
+    if (/\\/embed\\/?$/i.test(parsed.pathname)) {
+      return `${parsed.origin}${parsed.pathname}`;
+    }
+    const basePath = parsed.pathname.endsWith("/") ? parsed.pathname : `${parsed.pathname}/`;
+    return `${parsed.origin}${basePath}embed/`;
+  } catch {
+    return null;
+  }
 }
 
 function applyPredictionsToForm(predictions) {

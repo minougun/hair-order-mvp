@@ -271,6 +271,24 @@ textarea {
   margin-bottom: 10px;
 }
 
+.catalog-embed-wrap {
+  margin-bottom: 10px;
+}
+
+.catalog-embed-label {
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  color: #385156;
+}
+
+.catalog-embed-frame {
+  width: 100%;
+  min-height: 420px;
+  border: 1px solid #cfd8cc;
+  border-radius: 12px;
+  background: #fff;
+}
+
 .catalog-grid {
   display: grid;
   grid-template-columns: 1fr;
